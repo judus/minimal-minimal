@@ -16,10 +16,6 @@ class FrontControllerProvider extends AbstractProvider
     public function resolve()
     {
         return new FrontController(
-            IOC::resolve('Router'),
-            IOC::resolve('Response'),
-            IOC::resolve('ModelFactory'),
-            IOC::resolve('ViewFactory'),
             IOC::resolve('ControllerFactory')
         );
     }
