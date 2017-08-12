@@ -16,7 +16,6 @@ class RouterProvider extends AbstractProvider
     public function resolve()
     {
         return $this->singleton('Router', new Router(
-            IOC::resolve('Config'),
             IOC::resolve('Request'),
             IOC::resolve('Route'),
             IOC::resolve('Response')
