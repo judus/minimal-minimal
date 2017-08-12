@@ -7,7 +7,6 @@ use Maduser\Minimal\Framework\Factories\Contracts\CollectionFactoryInterface;
 use Maduser\Minimal\Framework\Factories\Contracts\MinimalFactoryInterface;
 use Maduser\Minimal\Collections\Contracts\CollectionInterface;
 use Maduser\Minimal\Config\Contracts\ConfigInterface;
-use Maduser\Minimal\Exceptions\TypeErrorException;
 use Maduser\Minimal\Http\Contracts\RequestInterface;
 use Maduser\Minimal\Http\Contracts\ResponseInterface;
 use Maduser\Minimal\Routing\Contracts\RouterInterface;
@@ -369,7 +368,6 @@ class Factory implements FactoryInterface
      * @param array|null $params
      *
      * @return array
-     * @throws TypeErrorException
      */
     public function register($name, array $params = null): array
     {
