@@ -133,6 +133,23 @@ class View
     /**
      * @return mixed
      */
+    public static function getFallback()
+    {
+        return self::call();
+    }
+
+
+    /**
+     * @param mixed $base
+     */
+    public static function setFallback($fallback)
+    {
+        self::call();
+    }
+
+    /**
+     * @return mixed
+     */
     public static function getTheme()
     {
         return self::call();
