@@ -373,18 +373,30 @@ class Factory implements FactoryInterface
     {
         $modules = [];
 
-        if ($this->endsWith($name, '*')) {
+        isset($path) || $path = $this->config->exists(
+            'paths.modules', $this->getBasePath());
 
-            $name = explode('*', $name);
 
-            isset($path) || $path = $this->config->exists(
-                'paths.modules', $this->getBasePath());
+        if (!$this->endsWith($name, '*') && preg_match('/\*/', $name)) {
 
-            $dirs = array_filter(glob($this->config->item('paths.system'). '/' .$path . '/' . $name[0] . '*'), 'is_dir');
+            $dirs = array_filter(glob($this->config->item('paths.system') . '/' . $path . '/' . $name), 'is_dir');
 
             foreach ($dirs as $dir) {
-                $moduleName = $name[0] . basename($dir);
+                $moduleName = str_replace($this->config->item('paths.system') . '/' . $path . '/',
+                    '', $dir);
+                if (!$this->getModules()->exists($moduleName)) {
+                    $modules[] = $this->register_($moduleName, $params);
+                }
 
+            }
+        } else if ($this->endsWith($name, '*')) {
+
+            //$name = explode('*', $name);
+
+            $dirs = array_filter(glob($this->config->item('paths.system'). '/' .$path . '/' . $name), 'is_dir');
+
+            foreach ($dirs as $dir) {
+                $moduleName = str_replace($this->config->item('paths.system') . '/' . $path . '/', '', $dir);
                 if (!$this->getModules()->exists($moduleName)) {
                     $modules[] = $this->register_($moduleName, $params);
                 }
