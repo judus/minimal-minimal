@@ -283,6 +283,14 @@ class View
         return self::call();
     }
 
+    /**
+     * @return string
+     */
+    public static function partial()
+    {
+        return self::call();
+    }
+
 
     /**
      * @param            $viewPath
