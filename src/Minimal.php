@@ -20,96 +20,99 @@ use Maduser\Minimal\Routing\Contracts\RouterInterface;
 class Minimal implements AppInterface
 {
     /**
-     * @var
+     * The default path of the project directory relative to the index.php
+     *
+     * @var string
      */
     private $basePath = '..';
 
     /**
-     * @var
+     * The default path of the app directory
+     *
+     * @var string
      */
     private $appPath = 'app';
 
     /**
-     * @var
+     * The default path in which the modules resides
+     *
+     * @var string
      */
     private $modulesPath = 'app';
 
     /**
-     * @var
+     * The default path of the minimal config file
+     *
+     * @var string
      */
     private $minimalFile = 'config/minimal.php';
 
     /**
-     * @var
+     * The default path of the main config file
+     *
+     * @var string
      */
     private $configFile = 'config/environment.php';
 
     /**
-     * @var
+     * The default path of the providers config file
+     *
+     * @var string
      */
     private $providersFile = 'config/providers.php';
 
     /**
-     * @var
+     * The default path of the bindings config file
+     *
+     * @var string
      */
     private $bindingsFile = 'config/bindings.php';
 
     /**
-     * @var
+     * The default path of the routes config file
+     *
+     * @var string
      */
     private $routesFile = 'config/routes.php';
 
     /**
-     * @var
+     * The default path of the modules config file
+     *
+     * @var string
      */
     private $modulesFile = 'config/modules.php';
 
     /**
-     * @var ConfigInterface
+     * An array to hold the objects that this class resolves through IOC
+     *
+     * @var array
      */
-    private $config;
+    private $container = [];
 
     /**
-     * @var RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    /**
-     * @var RouterInterface
-     */
-    private $router;
-
-    /**
-     * @var FactoryInterface
-     */
-    private $factory;
-
-    /**
+     * A reference to this
+     *
      * @var AppInterface
      */
     private $app;
 
     /**
+     * The registered modules collection
+     *
      * @var CollectionInterface
      */
     private $modules;
 
     /**
-     * @var FrontControllerInterface
-     */
-    private $frontController;
-
-    /**
-     * @var
+     * Holds the return value of the FrontController
+     *
+     * @var mixed
      */
     private $result;
 
     /**
+     * Returns a reference to this
+     *
      * @return AppInterface
      */
     public function getApp(): AppInterface
@@ -118,6 +121,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the reference to this
+     *
      * @param AppInterface $app
      *
      * @return AppInterface
@@ -130,7 +135,9 @@ class Minimal implements AppInterface
     }
 
     /**
-     * @return mixed
+     * Gets the path of the project directory relative to the index.php
+     *
+     * @return string
      */
     public function getBasePath(): string
     {
@@ -138,6 +145,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path of the project directory relative to the index.php
+     *
      * @param mixed $basepath
      *
      * @return AppInterface
@@ -150,7 +159,9 @@ class Minimal implements AppInterface
     }
 
     /**
-     * @return mixed
+     * Gets the path of the app directory
+     *
+     * @return string
      */
     public function getAppPath()
     {
@@ -158,6 +169,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path of the app directory
+     *
      * @param mixed $appPath
      *
      * @return AppInterface
@@ -170,7 +183,9 @@ class Minimal implements AppInterface
     }
 
     /**
-     * @return mixed
+     * Gets the path of the modules directory
+     *
+     * @return string
      */
     public function getModulesPath()
     {
@@ -178,6 +193,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path of the modules directory
+     *
      * @param string $filePath
      *
      * @return AppInterface
@@ -190,7 +207,9 @@ class Minimal implements AppInterface
     }
 
     /**
-     * @return mixed
+     * Gets the path to the minimal config file
+     *
+     * @return string
      */
     public function getMinimalFile()
     {
@@ -198,6 +217,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the minimal config file
+     *
      * @param mixed $minimalFile
      *
      * @return Minimal
@@ -210,6 +231,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the main config file
+     *
      * @return mixed
      */
     public function getConfigFile(): string
@@ -218,6 +241,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the main config file
+     *
      * @param string $path
      *
      * @return AppInterface
@@ -230,6 +255,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the providers config file
+     *
      * @return string
      */
     public function getProvidersFile(): string
@@ -238,6 +265,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the providers config file
+     *
      * @param string $path
      *
      * @return AppInterface
@@ -250,6 +279,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the bindings config file
+     *
      * @return string
      */
     public function getBindingsFile(): string
@@ -258,6 +289,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the bindings config file
+     *
      * @param string $path
      *
      * @return AppInterface
@@ -270,6 +303,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the routes config file
+     *
      * @return string
      */
     public function getRoutesFile(): string
@@ -278,6 +313,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the routes config file
+     *
      * @param string $path
      *
      * @return AppInterface
@@ -290,6 +327,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the modules config file
+     *
      * @return string
      */
     public function getModulesFile()
@@ -298,6 +337,8 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the path to the modules config file
+     *
      * @param string $path
      *
      * @return AppInterface
@@ -310,87 +351,79 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Convinience method to get the Config object
+     *
      * @return ConfigInterface
      */
     public function getConfig(): ConfigInterface
     {
-        if (is_null($this->config)) {
-            $this->setConfig(IOC::resolve('Config'));
-        }
-
-        return $this->config;
+        return $this->container('Config');
     }
 
     /**
-     * @param ConfigInterface $config
-     */
-    public function setConfig(ConfigInterface $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
+     * Convinience method to get the Request object
+     *
      * @return RequestInterface
      */
     public function getRequest(): RequestInterface
     {
-        if (is_null($this->request)) {
-            $this->setRequest(IOC::resolve('Request'));
-        }
-
-        return $this->request;
+        return $this->container('Request');
     }
 
     /**
-     * @param RequestInterface $request
-     */
-    public function setRequest(RequestInterface $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * @return mixed
+     * Convinience method to get the Response object
+     *
+     * @return ResponseInterface
      */
     public function getResponse(): ResponseInterface
     {
-        if (is_null($this->response)) {
-            $this->setResponse(IOC::resolve('Response'));
-        }
-
-        return $this->response;
+        return $this->container('Response');
     }
 
     /**
-     * @param mixed $response
-     */
-    public function setResponse(ResponseInterface $response)
-    {
-        $this->response = $response;
-    }
-
-    /**
-     * @return mixed
+     * Convinience method to get the Router object
+     *
+     * @return RouterInterface
      */
     public function getRouter(): RouterInterface
     {
-        if (is_null($this->router)) {
-            $this->setRouter(IOC::resolve('Router'));
-        }
-
-        return $this->router;
+        return $this->container('Router');
     }
 
     /**
-     * @param mixed $router
+     * Convinience method to get the FrontController object
+     *
+     * @return FrontControllerInterface
      */
-    public function setRouter(RouterInterface $router)
+    public function getFrontController(): FrontControllerInterface
     {
-        $this->router = $router;
+        return $this->container('FrontController');
     }
 
     /**
-     * @param          $middlewares
+     * Convinience method to get the Factory object
+     *
+     * @return FactoryInterface
+     */
+    public function getModules(): FactoryInterface
+    {
+        return $this->container('Factory');
+    }
+
+    /**
+     * Convinience method to get the Factory object
+     *
+     * @return FactoryInterface
+     */
+    public function getFactory(): FactoryInterface
+    {
+        return $this->container('Factory');
+    }
+
+    /**
+     * Get a Middleware instance with a list of middleware object to execute
+     *
+     * @param $middlewares
      *
      * @return Middleware
      */
@@ -400,67 +433,8 @@ class Minimal implements AppInterface
     }
 
     /**
-     * @return mixed
-     */
-    public function getModules(): FactoryInterface
-    {
-        if (is_null($this->modules)) {
-            $this->setModules(IOC::resolve('Factory'));
-        }
-
-        return $this->modules;
-    }
-
-    /**
-     * @param mixed $modules
+     * Gets usually the result of a previously executed FrontController
      *
-     * @return AppInterface
-     */
-    public function setModules(FactoryInterface $modules): AppInterface
-    {
-        $this->modules = $modules;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFactory(): FactoryInterface
-    {
-        if (is_null($this->factory)) {
-            $this->setFactory(IOC::resolve('Factory'));
-        }
-
-        return $this->factory;
-    }
-
-    /**
-     * @param mixed $modulesFactory
-     */
-    public function setFactory(FactoryInterface $modulesFactory)
-    {
-        $this->factory = $modulesFactory;
-    }
-
-    /**
-     * @param FrontControllerInterface $frontController
-     */
-    public function setFrontController(
-        FrontControllerInterface $frontController
-    ) {
-        $this->frontController = $frontController;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFrontController()
-    {
-        return IOC::resolve('FrontController');
-    }
-
-    /**
      * @return mixed
      */
     public function getResult()
@@ -469,11 +443,17 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets what usually should be the result of executed FrontController
+     *
      * @param mixed $result
+     *
+     * @return AppInterface
      */
     public function setResult($result)
     {
         $this->result = $result;
+
+        return $this;
     }
 
     /**
@@ -506,24 +486,30 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets an object from the container
+     * Resolves it through IOC if that didn't happen yet
      *
+     * @param $name
+     *
+     * @return mixed
      */
-    public function load()
+    public function container($name)
     {
-        $this->registerBindings();
-        $this->registerProviders();
-        $this->registerMinimal();
-        $this->registerConfig();
-        $this->registerRoutes();
-        $this->registerModules();
+        if (!isset($this->container[$name])) {
+            $this->container[$name] = IOC::resolve($name);
+        }
 
-        App::setInstance($this);
-
-        return $this;
+        return $this->container[$name];
     }
 
     /**
+     * Registers the minimal config file.
+     * It stores the array items from the minimal config file in the Config
+     * object and eventually sets the phpini error_reporting and display_errors.
+     *
      * @param null $filePath
+     *
+     * @return AppInterface
      */
     public function registerMinimal($filePath = null)
     {
@@ -550,12 +536,20 @@ class Minimal implements AppInterface
                 ini_set('display_errors',
                     $this->getConfig()->item('errors.display_errors'));
             }
-
         }
+
+        return $this;
     }
 
     /**
+     * Registers the main config file.
+     * It stores the array items from the main config file in the Config object.
+     * It will merge recursively with other items in the Config object.
+     * It eventually sets the phpini error_reporting and display_errors
+     *
      * @param null $filePath
+     *
+     * @return AppInterface
      */
     public function registerConfig($filePath = null)
     {
@@ -587,10 +581,18 @@ class Minimal implements AppInterface
                     $this->getConfig()->item('errors.display_errors'));
             }
         }
+
+        return $this;
     }
 
     /**
+     * Registers the bindings config file.
+     * It adds the array items from the bindings config file to the IOC
+     * container
+     *
      * @param null $filePath
+     *
+     * @return AppInterface
      */
     public function registerBindings($filePath = null)
     {
@@ -604,10 +606,18 @@ class Minimal implements AppInterface
                 IOC::addBindings($bindings);
             }
         }
+
+        return $this;
     }
 
     /**
+     * Registers the providers config file.
+     * It adds the array items from the providers config file to the IOC
+     * container.
+     *
      * @param null $filePath
+     *
+     * @return AppInterface
      */
     public function registerProviders($filePath = null)
     {
@@ -622,10 +632,17 @@ class Minimal implements AppInterface
                 IOC::addProviders($providers);
             }
         }
+
+        return $this;
     }
 
     /**
+     * Registers the routes config file
+     * It will just require the file e.g. execute the instructions in the file
+     *
      * @param $filePath
+     *
+     * @return AppInterface
      */
     public function registerRoutes($filePath = null)
     {
@@ -642,8 +659,18 @@ class Minimal implements AppInterface
             /** @noinspection PhpIncludeInspection */
             require $filePath;
         }
+
+        return $this;
     }
 
+    /**
+     * Registers the modules config file
+     * It will just require the file e.g. execute the instructions in the file
+     *
+     * @param $filePath
+     *
+     * @return AppInterface
+     */
     public function registerModules($filePath = null)
     {
         $filePath || $filePath = $this->getModulesFile();
@@ -660,6 +687,27 @@ class Minimal implements AppInterface
     }
 
     /**
+     * The load/setup process of Minimal.
+     * All that needs to be done before Minimal can be used as intended by
+     * default.
+     */
+    public function load()
+    {
+        $this->registerBindings();
+        $this->registerProviders();
+        $this->registerMinimal();
+        $this->registerConfig();
+        $this->registerRoutes();
+        $this->registerModules();
+
+        App::setInstance($this);
+
+        return $this;
+    }
+
+    /**
+     * Does what Minimal is here to do: Execute a route!
+     *
      * @param null $uri
      *
      * @return $this
@@ -681,18 +729,29 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Sets the content in the Response object and tells the Response object
+     * to send it.
+     *
      * @return $this
      */
     public function respond()
     {
-        $response = $this->getResponse();
-        $response->setContent($this->getResult())->send();
+        $this->getResponse()->setContent($this->getResult())->send();
 
         return $this;
     }
 
     /**
-     *
+     * Exit php
+     * Eventually do something just before that?
+     */
+    public function terminate()
+    {
+        exit();
+    }
+
+    /**
+     * Executes all the 4 stages: load, execute, respond, terminate
      */
     public function dispatch()
     {
@@ -700,13 +759,5 @@ class Minimal implements AppInterface
         $this->execute();
         $this->respond();
         $this->terminate();
-    }
-
-    /**
-     *
-     */
-    public function terminate()
-    {
-        exit();
     }
 }

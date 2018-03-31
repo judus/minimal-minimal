@@ -114,19 +114,9 @@ interface AppInterface
     public function getConfig(): ConfigInterface;
 
     /**
-     * @param ConfigInterface $config
-     */
-    public function setConfig(ConfigInterface $config);
-
-    /**
      * @return RequestInterface
      */
     public function getRequest(): RequestInterface;
-
-    /**
-     * @param RequestInterface $request
-     */
-    public function setRequest(RequestInterface $request);
 
     /**
      * @return ResponseInterface
@@ -134,29 +124,14 @@ interface AppInterface
     public function getResponse(): ResponseInterface;
 
     /**
-     * @param ResponseInterface $response
-     */
-    public function setResponse(ResponseInterface $response);
-
-    /**
      * @return RouterInterface
      */
     public function getRouter(): RouterInterface;
 
     /**
-     * @param RouterInterface $router
-     */
-    public function setRouter(RouterInterface $router);
-
-    /**
      * @return FactoryInterface
      */
     public function getFactory(): FactoryInterface;
-
-    /**
-     * @param FactoryInterface $factory
-     */
-    public function setFactory(FactoryInterface $factory);
 
     /**
      * @return AppInterface
@@ -175,8 +150,4 @@ interface AppInterface
      */
     public function getModules(): FactoryInterface;
 
-    /**
-     * @param FactoryInterface $modules
-     */
-    public function setModules(FactoryInterface $modules);
 }
