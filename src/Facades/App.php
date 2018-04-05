@@ -63,11 +63,22 @@ class App extends Facade
     }
 
     /**
-     * @param null  $uri
+     * @param null $uri
+     *
+     * @return $this
+     *
+     */
+    public static function run($uri = null)
+    {
+        return self::getInstance()->execute($uri)->getResult();
+    }
+
+    /**
+     * @param null $uri
      *
      * @return $this
      */
-    public static function run($uri = null)
+    public static function execute($uri = null)
     {
         return self::getInstance()->execute($uri)->getResult();
     }
@@ -98,5 +109,50 @@ class App extends Facade
         is_null($_closure) || $_closure();
 
         self::getInstance()->execute()->respond()->terminate();
+    }
+
+    public static function bindings()
+    {
+        return IOC::bindings();
+    }
+
+    public static function providers()
+    {
+        return IOC::providers();
+    }
+
+    public static function singleton($name, $object = null)
+    {
+        return IOC::singleton($name, $object);
+    }
+
+    public static function addBindings(array $bindings)
+    {
+        return IOC::addBindings($bindings);
+    }
+
+    public static function bind(array $bindings)
+    {
+        return IOC::addBindings($bindings);
+    }
+
+    public static function addProviders(array $providers)
+    {
+        return IOC::addProviders($providers);
+    }
+
+    public static function register(array $providers)
+    {
+        return IOC::addProviders($providers);
+    }
+
+    public static function make($class, $params = [])
+    {
+        return IOC::make($class, $params);
+    }
+
+    public static function resolve($name)
+    {
+        return IOC::resolve($name);
     }
 }
