@@ -11,12 +11,19 @@ class App extends Facade
 {
     protected static $instance;
 
+    /**
+     * Set the instance this facade refers to
+     *
+     * @param $instance
+     */
     public static function setInstance($instance)
     {
         self::$instance = $instance;
     }
 
     /**
+     * Make the instance this facade refers to
+     *
      * @param            $class
      * @param array|null $options
      *
@@ -35,6 +42,8 @@ class App extends Facade
     }
 
     /**
+     * Get the instance this facade refers to
+     *
      * @param null  $class
      * @param array $options
      *
@@ -63,6 +72,8 @@ class App extends Facade
     }
 
     /**
+     * Execute a route
+     *
      * @param null $uri
      *
      * @return $this
@@ -74,6 +85,8 @@ class App extends Facade
     }
 
     /**
+     * Execute a route
+     *
      * @param null $uri
      *
      * @return $this
@@ -84,6 +97,8 @@ class App extends Facade
     }
 
     /**
+     * Runs the application
+     *
      * @param array         $options
      * @param \Closure|null $closure
      * @param null          $class
@@ -111,46 +126,83 @@ class App extends Facade
         self::getInstance()->execute()->respond()->terminate();
     }
 
+    /**
+     * Return the bindings container
+     *
+     * @return \Maduser\Minimal\Provider\Container
+     */
     public static function bindings()
     {
         return IOC::bindings();
     }
 
+    /**
+     * Return the providers container
+     *
+     * @return \Maduser\Minimal\Provider\Container
+     */
     public static function providers()
     {
         return IOC::providers();
     }
 
+    /**
+     * Return a registered singleton or make one
+     *
+     * @param      $name
+     * @param null $object
+     *
+     * @return mixed
+     */
     public static function singleton($name, $object = null)
     {
         return IOC::singleton($name, $object);
     }
 
-    public static function addBindings(array $bindings)
-    {
-        return IOC::addBindings($bindings);
-    }
-
+    /**
+     * Add interface bindings
+     *
+     * @param array $bindings
+     *
+     * @return mixed
+     */
     public static function bind(array $bindings)
     {
         return IOC::addBindings($bindings);
     }
 
-    public static function addProviders(array $providers)
-    {
-        return IOC::addProviders($providers);
-    }
-
+    /**
+     * Register providers/factories
+     *
+     * @param array $providers
+     *
+     * @return mixed
+     */
     public static function register(array $providers)
     {
         return IOC::addProviders($providers);
     }
 
+    /**
+     * Instantiate a new class
+     *
+     * @param       $class
+     * @param array $params
+     *
+     * @return mixed
+     */
     public static function make($class, $params = [])
     {
         return IOC::make($class, $params);
     }
 
+    /**
+     * Resolve a class instance e.g. make or get singleton
+     *
+     * @param $name
+     *
+     * @return mixed
+     */
     public static function resolve($name)
     {
         return IOC::resolve($name);
