@@ -11,7 +11,11 @@ class LoggerProvider extends AbstractProvider
     public function resolve()
     {
         return $this->singleton('Log',
-            new Logger(path('logs'), Config::log('level'), Config::log('benchmarks'))
+            new Logger(
+                PATH . Config::storage('logs'),
+                Config::log('level'),
+                Config::log('benchmarks')
+            )
         );
     }
 }
