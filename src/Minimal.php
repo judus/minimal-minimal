@@ -1,5 +1,6 @@
 <?php namespace Maduser\Minimal\Framework;
 
+use Maduser\Minimal\Event\Contracts\DispatcherInterface;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
 use Maduser\Minimal\Framework\Contracts\FactoryInterface;
 use Maduser\Minimal\Collections\Contracts\CollectionInterface;
@@ -7,6 +8,7 @@ use Maduser\Minimal\Controllers\Contracts\FrontControllerInterface;
 use Maduser\Minimal\Config\Contracts\ConfigInterface;
 use Maduser\Minimal\Framework\Facades\App;
 use Maduser\Minimal\Framework\Facades\IOC;
+use Maduser\Minimal\Framework\Facades\Event;
 use Maduser\Minimal\Http\Contracts\RequestInterface;
 use Maduser\Minimal\Http\Contracts\ResponseInterface;
 use Maduser\Minimal\Middlewares\Middleware;
@@ -67,6 +69,13 @@ class Minimal implements AppInterface
      * @var string
      */
     private $bindingsFile = 'config/bindings.php';
+
+    /**
+     * The default path of the event subscribers config file
+     *
+     * @var string
+     */
+    private $subscribersFile = 'config/subscribers.php';
 
     /**
      * The default path of the routes config file
@@ -303,6 +312,30 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Gets the path to the subscribers config file
+     *
+     * @return string
+     */
+    public function getSubscribersFile(): string
+    {
+        return $this->subscribersFile;
+    }
+
+    /**
+     * Sets the path to the subscribers config file
+     *
+     * @param string $path
+     *
+     * @return Minimal
+     */
+    public function setSubscribersFile(string $path): AppInterface
+    {
+        $this->subscribersFile = $path;
+
+        return $this;
+    }
+
+    /**
      * Gets the path to the routes config file
      *
      * @return string
@@ -388,6 +421,16 @@ class Minimal implements AppInterface
     public function getRouter(): RouterInterface
     {
         return $this->container('Router');
+    }
+
+    /**
+     * Convinience method to get the EventDispatcher object
+     *
+     * @return DispatcherInterface
+     */
+    public function getEventDispatcher(): DispatcherInterface
+    {
+        return $this->container('Event');
     }
 
     /**
@@ -637,6 +680,32 @@ class Minimal implements AppInterface
     }
 
     /**
+     * Registers the event subscribers config file
+     * It will make/resolve a instance of each subscriber class in the config
+     * file and register it in the event dispatcher
+     *
+     * @param $filePath
+     *
+     * @return AppInterface
+     */    public function registerSubscribers($filePath = null)
+    {
+        $filePath || $filePath = $this->getSubscribersFile();
+        is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
+
+        if (file_exists($filePath)) {
+            /** @noinspection PhpIncludeInspection */
+            $subscribers = require_once $filePath;
+            if (is_array($subscribers)) {
+                foreach ($subscribers as $subscriber) {
+                    $this->getEventDispatcher()->register(IOC::resolve($subscriber));
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Registers the routes config file
      * It will just require the file e.g. execute the instructions in the file
      *
@@ -697,10 +766,13 @@ class Minimal implements AppInterface
         $this->registerProviders();
         $this->registerMinimal();
         $this->registerConfig();
+        $this->registerSubscribers();
         $this->registerRoutes();
         $this->registerModules();
 
         App::setInstance($this);
+
+        Event::dispatch('app.ready');
 
         return $this;
     }
@@ -719,11 +791,19 @@ class Minimal implements AppInterface
         /** @var Middleware $middleware */
         $middleware = $this->getMiddleware($route->getMiddlewares());
 
+        Event::dispatch('app.routed');
+
         $response = $middleware->dispatch(function () use ($route, $uri) {
-            return $this->getFrontController()->dispatch($route)->getResult();
+            Event::dispatch('app.frontController.dispatch');
+            $results = $this->getFrontController()->dispatch($route)->getResult();
+            Event::dispatch('app.frontController.dispatched');
+
+            return $results;
         });
 
         $this->setResult($response);
+
+        Event::dispatch('app.executed');
 
         return $this;
     }
@@ -736,8 +816,9 @@ class Minimal implements AppInterface
      */
     public function respond()
     {
+        Event::dispatch('app.respond');
         $this->getResponse()->setContent($this->getResult())->send();
-
+        Event::dispatch('app.responded');
         return $this;
     }
 
@@ -747,6 +828,8 @@ class Minimal implements AppInterface
      */
     public function terminate()
     {
+        Event::dispatch('app.terminate');
+        Event::dispatch('app.terminated');
         exit();
     }
 

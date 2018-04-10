@@ -49,14 +49,14 @@ interface ModuleInterface
     public function getName(): string;
 
     /**
-     * @param $name
+     * @param string $name
      */
-    public function setName($name);
+    public function setName(string $name);
 
     /**
-     * @param $path
+     * @param string $path
      */
-    public function setBasePath($path);
+    public function setBasePath(string $path);
 
     /**
      * @return string
@@ -69,9 +69,9 @@ interface ModuleInterface
     public function getBootFile(): string;
 
     /**
-     * @param mixed $bootFile
+     * @param string $path
      */
-    public function setBootFile($bootFile);
+    public function setBootFile(string $bootFile);
 
     /**
      * @return string
@@ -79,9 +79,9 @@ interface ModuleInterface
     public function getConfigFile(): string;
 
      /**
-     * @param      $path
-     */
-    public function setConfigFile($path);
+      * @param string $path
+      */
+    public function setConfigFile(string $path);
 
     /**
      * @return string
@@ -89,9 +89,9 @@ interface ModuleInterface
     public function getBindingsFile(): string;
 
     /**
-     * @param      $path
+     * @param string $path
      */
-    public function setBindingsFile($path);
+    public function setBindingsFile(string $path);
 
     /**
      * @return string
@@ -99,9 +99,9 @@ interface ModuleInterface
     public function getProvidersFile(): string;
 
     /**
-     * @param      $path
+     * @param string $path
      */
-    public function setProvidersFile($path);
+    public function setProvidersFile(string $path);
 
     /**
      * @return string
@@ -109,7 +109,7 @@ interface ModuleInterface
     public function getRoutesFile(): string;
 
     /**
-     * @param      $path
+     * @param string $path
      */
-    public function setRoutesFile($path);
+    public function setRoutesFile(string $path);
 }

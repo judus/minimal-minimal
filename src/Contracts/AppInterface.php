@@ -99,6 +99,18 @@ interface AppInterface
     /**
      * @return string
      */
+    public function getSubscribersFile(): string;
+
+    /**
+     * @param string $path
+     *
+     * @return AppInterface
+     */
+    public function setSubscribersFile(string $path): AppInterface;
+
+    /**
+     * @return string
+     */
     public function getRoutesFile(): string;
 
     /**

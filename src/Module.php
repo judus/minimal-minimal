@@ -43,6 +43,11 @@ class Module implements ModuleInterface
     /**
      * @var
      */
+    private $subscribersFile;
+
+    /**
+     * @var
+     */
     private $routesFile;
 
     /**
@@ -56,7 +61,7 @@ class Module implements ModuleInterface
     /**
      * @param $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -72,7 +77,7 @@ class Module implements ModuleInterface
     /**
      * @param mixed $path
      */
-    public function setBasePath($path)
+    public function setBasePath(string $path)
     {
         $this->basePath = $path;
     }
@@ -88,7 +93,7 @@ class Module implements ModuleInterface
     /**
      * @param mixed $bootFile
      */
-    public function setBootFile($bootFile)
+    public function setBootFile(string $bootFile)
     {
         $this->bootFile = $bootFile;
     }
@@ -104,7 +109,7 @@ class Module implements ModuleInterface
     /**
      * @param $path
      */
-    public function setConfigFile($path)
+    public function setConfigFile(string $path)
     {
         $this->configFile = $path;
     }
@@ -120,7 +125,7 @@ class Module implements ModuleInterface
     /**
      * @param $path
      */
-    public function setBindingsFile($path)
+    public function setBindingsFile(string $path)
     {
         $this->bindingsFile = $path;
     }
@@ -136,9 +141,27 @@ class Module implements ModuleInterface
     /**
      * @param $path
      */
-    public function setProvidersFile($path)
+    public function setProvidersFile(string $path)
     {
         $this->providersFile = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubscribersFile(): string
+    {
+        return $this->subscribersFile;
+    }
+
+    /**
+     * @param string $subscribersFile
+     *
+     * @return Module
+     */
+    public function setSubscribersFile(string $subscribersFile)
+    {
+        $this->subscribersFile = $subscribersFile;
     }
 
     /**
@@ -173,6 +196,7 @@ class Module implements ModuleInterface
         $this->registerConfig();
         $this->registerBindings();
         $this->registerProviders();
+        $this->registerSubscribers();
         $this->registerRoutes();
     }
 
@@ -196,6 +220,14 @@ class Module implements ModuleInterface
      *
      */
     public function registerProviders()
+    {
+
+    }
+
+    /**
+     *
+     */
+    public function registerSubscribers()
     {
 
     }

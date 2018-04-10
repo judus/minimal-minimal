@@ -49,6 +49,8 @@ abstract class Facade
             $method = 'get' . $reflect->getShortName();
             if (method_exists($class, $method)) {
                 self::$instance = $class->{$method}();
+            } else {
+                self::$instance = $class->container($reflect->getShortName());
             }
         }
 

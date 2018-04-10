@@ -41,6 +41,11 @@ class Factory implements FactoryInterface
     /**
      * @var string
      */
+    private $subscribersFile = 'config/subscribers.php';
+
+    /**
+     * @var string
+     */
     private $routesFile = 'config/routes.php';
 
     /**
@@ -162,6 +167,24 @@ class Factory implements FactoryInterface
     public function setProvidersFile(string $path): FactoryInterface
     {
         $this->providersFile = $path;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubscribersFile(): string
+    {
+        return $this->subscribersFile;
+    }
+
+    /**
+     * @param string $subscribersFile
+     */
+    public function setSubscribersFile(string $subscribersFile)
+    {
+        $this->subscribersFile = $subscribersFile;
 
         return $this;
     }
@@ -376,7 +399,6 @@ class Factory implements FactoryInterface
         isset($path) || $path = $this->config->exists(
             'paths.modules', $this->getBasePath());
 
-
         if (!$this->endsWith($name, '*') && preg_match('/\*/', $name)) {
 
             $dirs = array_filter(glob($this->config->item('paths.system') . '/' . $path . '/' . $name), 'is_dir');
@@ -387,11 +409,9 @@ class Factory implements FactoryInterface
                 if (!$this->getModules()->exists($moduleName)) {
                     $modules[] = $this->register_($moduleName, $params);
                 }
-
             }
-        } else if ($this->endsWith($name, '*')) {
 
-            //$name = explode('*', $name);
+        } else if ($this->endsWith($name, '*')) {
 
             $dirs = array_filter(glob($this->config->item('paths.system'). '/' .$path . '/' . $name), 'is_dir');
 
@@ -400,7 +420,6 @@ class Factory implements FactoryInterface
                 if (!$this->getModules()->exists($moduleName)) {
                     $modules[] = $this->register_($moduleName, $params);
                 }
-
             }
 
         } else {
@@ -430,6 +449,9 @@ class Factory implements FactoryInterface
         isset($config) || $config = $this->config->exists(
             'modules.configFile', $this->getConfigFile());
 
+        isset($subscribers) || $subscribers = $this->config->exists(
+            'modules.subscribersFile', $this->getSubscribersFile());
+
         isset($routes) || $routes = $this->config->exists(
             'modules.routesFile', $this->getRoutesFile());
 
@@ -439,11 +461,13 @@ class Factory implements FactoryInterface
         $module->setBindingsFile($module->getBasePath() . $bindings);
         $module->setProvidersFile($module->getBasePath() . $providers);
         $module->setConfigFile($module->getBasePath() . $config);
+        $module->setSubscribersFile($module->getBasePath() . $subscribers);
         $module->setRoutesFile($module->getBasePath() . $routes);
 
         $this->app->registerConfig($module->getConfigFile());
         $this->app->registerBindings($module->getBindingsFile());
         $this->app->registerProviders($module->getProvidersFile());
+        $this->app->registerSubscribers($module->getSubscribersFile());
         $this->app->registerRoutes($module->getRoutesFile());
 
         $this->registerModule($module);
