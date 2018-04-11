@@ -2,9 +2,6 @@
 
 namespace Maduser\Minimal\Framework\Facades;
 
-use App\Demo\Logger\Logger;
-
-
 /**
  * Class Event
  *
