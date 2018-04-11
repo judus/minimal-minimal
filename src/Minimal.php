@@ -507,6 +507,8 @@ class Minimal implements AppInterface
      */
     public function __construct(array $params = [], $returnInstance = false)
     {
+        define('APPSTART', microtime(true));
+
         if (version_compare(phpversion(), '7.0.0', '<')) {
             die('Requires PHP version > 7.0.0');
         }
@@ -522,6 +524,7 @@ class Minimal implements AppInterface
         !isset($config) || $this->setConfigFile($config);
         !isset($providers) || $this->setProvidersFile($providers);
         !isset($bindings) || $this->setBindingsFile($bindings);
+        !isset($subscribers) || $this->setSubscribersFile($subscribers);
         !isset($routes) || $this->setRoutesFile($routes);
         !isset($modules) || $this->setModulesFile($modules);
 
@@ -557,7 +560,6 @@ class Minimal implements AppInterface
     public function registerMinimal($filePath = null)
     {
         $filePath || $filePath = $this->getMinimalFile();
-
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
 
         if (file_exists($filePath)) {
@@ -579,6 +581,9 @@ class Minimal implements AppInterface
                 ini_set('display_errors',
                     $this->getConfig()->item('errors.display_errors'));
             }
+            $this->event('minimal.loaded.minimal', [
+                is_array($configItems) ? $configItems : [], $filePath, $this
+            ]);
         }
 
         return $this;
@@ -597,7 +602,6 @@ class Minimal implements AppInterface
     public function registerConfig($filePath = null)
     {
         $filePath || $filePath = $this->getConfigFile();
-
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
 
         if (file_exists($filePath)) {
@@ -623,6 +627,10 @@ class Minimal implements AppInterface
                 ini_set('display_errors',
                     $this->getConfig()->item('errors.display_errors'));
             }
+
+            $this->event('minimal.loaded.config', [
+                is_array($configItems) ? $configItems : [], $filePath, $this
+            ]);
         }
 
         return $this;
@@ -648,6 +656,10 @@ class Minimal implements AppInterface
             if (is_array($bindings)) {
                 IOC::addBindings($bindings);
             }
+
+            $this->event('minimal.loaded.bindings', [
+                is_array($bindings) ? $bindings : [], $filePath, $this
+            ]);
         }
 
         return $this;
@@ -674,7 +686,12 @@ class Minimal implements AppInterface
             if (is_array($providers)) {
                 IOC::addProviders($providers);
             }
+
+            $this->event('minimal.loaded.providers', [
+                is_array($providers) ? $providers : [], $filePath, $this
+            ]);
         }
+
 
         return $this;
     }
@@ -687,7 +704,8 @@ class Minimal implements AppInterface
      * @param $filePath
      *
      * @return AppInterface
-     */    public function registerSubscribers($filePath = null)
+     */
+    public function registerSubscribers($filePath = null)
     {
         $filePath || $filePath = $this->getSubscribersFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -700,6 +718,10 @@ class Minimal implements AppInterface
                     $this->getEventDispatcher()->register(IOC::resolve($subscriber));
                 }
             }
+
+            $this->event('minimal.loaded.subscribers', [
+                is_array($subscribers) ? $subscribers : [], $filePath, $this
+            ]);
         }
 
         return $this;
@@ -713,7 +735,7 @@ class Minimal implements AppInterface
      *
      * @return AppInterface
      */
-    public function registerRoutes($filePath = null)
+    public function registerRoutes($filePath = null): AppInterface
     {
         $filePath || $filePath = $this->getRoutesFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -727,6 +749,10 @@ class Minimal implements AppInterface
 
             /** @noinspection PhpIncludeInspection */
             require $filePath;
+
+            $this->event('minimal.loaded.routes', [
+                $router, $filePath, $this
+            ]);
         }
 
         return $this;
@@ -740,7 +766,7 @@ class Minimal implements AppInterface
      *
      * @return AppInterface
      */
-    public function registerModules($filePath = null)
+    public function registerModules($filePath = null): AppInterface
     {
         $filePath || $filePath = $this->getModulesFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -752,7 +778,13 @@ class Minimal implements AppInterface
 
             /** @noinspection PhpIncludeInspection */
             $mods = require_once $filePath;
+
+            $this->event('minimal.loaded.modules', [
+                $modules, $filePath, $this
+            ]);
         }
+
+        return $this;
     }
 
     /**
@@ -762,6 +794,8 @@ class Minimal implements AppInterface
      */
     public function load()
     {
+        $this->event('minimal.load.before', $this);
+
         $this->registerBindings();
         $this->registerProviders();
         $this->registerMinimal();
@@ -772,7 +806,7 @@ class Minimal implements AppInterface
 
         App::setInstance($this);
 
-        Event::dispatch('app.ready');
+        $this->event('minimal.load.after', $this);
 
         return $this;
     }
@@ -786,24 +820,42 @@ class Minimal implements AppInterface
      */
     public function execute($uri = null)
     {
+        $this->event('minimal.execute.before', $this);
+
         $route = $this->getRouter()->getRoute($uri);
 
-        /** @var Middleware $middleware */
+        $this->event('minimal.route.found', [$route, $this]);
+
         $middleware = $this->getMiddleware($route->getMiddlewares());
 
-        Event::dispatch('app.routed');
+        $this->event('minimal.middleware.dispatch.before', [
+            $route, $middleware, $this
+        ]);
 
         $response = $middleware->dispatch(function () use ($route, $uri) {
-            Event::dispatch('app.frontController.dispatch');
+
+            $this->event('minimal.frontController.dispatch.before', [
+                $route, $this
+            ]);
+
             $results = $this->getFrontController()->dispatch($route)->getResult();
-            Event::dispatch('app.frontController.dispatched');
+
+            $this->event('minimal.frontController.dispatch.after', [
+                $results, $route, $this
+            ]);
 
             return $results;
         });
 
+        $this->event('minimal.middleware.dispatch.after', [
+            $response, $route, $middleware, $this
+        ]);
+
         $this->setResult($response);
 
-        Event::dispatch('app.executed');
+        $this->event('minimal.execute.after', [
+            $response, $route, $middleware, $this
+        ]);
 
         return $this;
     }
@@ -816,9 +868,10 @@ class Minimal implements AppInterface
      */
     public function respond()
     {
-        Event::dispatch('app.respond');
+        $this->event('minimal.respond.before', $this);
         $this->getResponse()->setContent($this->getResult())->send();
-        Event::dispatch('app.responded');
+        $this->event('minimal.respond.after', $this);
+
         return $this;
     }
 
@@ -828,8 +881,8 @@ class Minimal implements AppInterface
      */
     public function terminate()
     {
-        Event::dispatch('app.terminate');
-        Event::dispatch('app.terminated');
+        $this->event('minimal.terminate', $this);
+        $this->event('minimal.terminated', $this);
         exit();
     }
 
@@ -839,8 +892,34 @@ class Minimal implements AppInterface
     public function dispatch()
     {
         $this->load();
+
+        $this->event('minimal.dispatch.before', $this);
+
         $this->execute();
         $this->respond();
+
+        $this->event('minimal.dispatch.after', $this);
+
         $this->terminate();
+    }
+
+    protected $hasEventDispatcher = false;
+
+    protected function hasEventDispatcher()
+    {
+        if (! $this->hasEventDispatcher) {
+            $this->hasEventDispatcher = IOC::hasProvider('Event');
+        }
+
+        return $this->hasEventDispatcher;
+    }
+
+    protected function event($event, $data = null)
+    {
+        if ($this->hasEventDispatcher()) {
+            return Event::dispatch($event, $data);
+        }
+
+        return [];
     }
 }
