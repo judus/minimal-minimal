@@ -8,10 +8,23 @@ use Maduser\Minimal\Framework\Contracts\ModuleInterface;
 use Maduser\Minimal\Http\Contracts\RequestInterface;
 use Maduser\Minimal\Http\Contracts\ResponseInterface;
 use Maduser\Minimal\Routing\Contracts\RouterInterface;
+use Maduser\Minimal\Modules\Registry as Implementation;
 
 class Modules extends Facade
 {
     public static $instance;
+
+    /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(self::$instance)) {
+            static::$instance = new Implementation();
+        }
+
+        return self::$instance;
+    }
 
     /**
      * @return string
@@ -291,7 +304,7 @@ class Modules extends Facade
      * @return array
      * @throws TypeErrorException
      */
-    public static function register($name, array $params = null): array
+    public static function register($name, array $params = null)
     {
         return self::call();
     }

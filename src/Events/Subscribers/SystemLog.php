@@ -5,6 +5,7 @@ use Maduser\Minimal\Framework\Contracts\AppInterface;
 use Maduser\Minimal\Framework\Contracts\FactoryInterface;
 use Maduser\Minimal\Framework\Facades\Log;
 use Maduser\Minimal\Framework\Facades\Request;
+use Maduser\Minimal\Modules\Registry;
 use Maduser\Minimal\Routing\Route;
 use Maduser\Minimal\Routing\Router;
 use Maduser\Minimal\Framework\Facades\App;
@@ -70,7 +71,7 @@ class SystemLog extends Subscriber
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedModules(FactoryInterface $modules, $filePath, $app)
+    protected function onAppLoadedModules(array $modules, $filePath, $app)
     {
         $this->log('Loaded: ' . $filePath);
     }
@@ -142,7 +143,7 @@ class SystemLog extends Subscriber
         if (! $this->headerLogged) {
             Log::system('--------------------------------------------------------');
             Log::system('REQUEST FROM ' . Request::getIp());
-            Log::system('URI: ' . Request::getUriString());
+            Log::info('URI: ' . Request::getUriString());
             Log::system('--------------------------------------------------------');
             $this->log('Loaded: ' . PATH . App::getBindingsFile());
             $this->log('Loaded: ' . PATH . App::getProvidersFile());
@@ -155,8 +156,8 @@ class SystemLog extends Subscriber
 
     protected function footer()
     {
-        Log::system('--------------------------------------------------------');
-        Log::system('DURATION: ' . $this->interval());
+        //Log::system('--------------------------------------------------------');
+        //Log::system('DURATION: ' . $this->interval());
         Log::system('--------------------------------------------------------');
     }
 

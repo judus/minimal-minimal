@@ -2,6 +2,7 @@
 
 namespace Maduser\Minimal\Framework\Facades;
 
+use Maduser\Minimal\Log\Logger;
 /**
  * Class Event
  *

@@ -141,11 +141,6 @@ interface AppInterface
     public function getRouter(): RouterInterface;
 
     /**
-     * @return FactoryInterface
-     */
-    public function getFactory(): FactoryInterface;
-
-    /**
      * @return AppInterface
      */
     public function getApp(): AppInterface;
@@ -156,10 +151,5 @@ interface AppInterface
      * @return AppInterface
      */
     public function setApp(AppInterface $app): AppInterface;
-
-    /**
-     * @return FactoryInterface
-     */
-    public function getModules(): FactoryInterface;
 
 }

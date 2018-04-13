@@ -33,6 +33,7 @@ class App extends Facade
         $class,
         array $options = null
     ): Implementation {
+
         // TODO: get rid of $_SERVER
         $options || $options = [
             'path' => realpath($_SERVER['DOCUMENT_ROOT'] . '/../') . '/'

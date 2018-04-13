@@ -2,7 +2,6 @@
 
 use Maduser\Minimal\Event\Contracts\DispatcherInterface;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
-use Maduser\Minimal\Framework\Contracts\FactoryInterface;
 use Maduser\Minimal\Collections\Contracts\CollectionInterface;
 use Maduser\Minimal\Controllers\Contracts\FrontControllerInterface;
 use Maduser\Minimal\Config\Contracts\ConfigInterface;
@@ -12,6 +11,7 @@ use Maduser\Minimal\Framework\Facades\Event;
 use Maduser\Minimal\Http\Contracts\RequestInterface;
 use Maduser\Minimal\Http\Contracts\ResponseInterface;
 use Maduser\Minimal\Middlewares\Middleware;
+use Maduser\Minimal\Modules\ModulesInterface;
 use Maduser\Minimal\Routing\Contracts\RouterInterface;
 
 /**
@@ -446,21 +446,11 @@ class Minimal implements AppInterface
     /**
      * Convinience method to get the Factory object
      *
-     * @return FactoryInterface
+     * @return ModulesInterface
      */
-    public function getModules(): FactoryInterface
+    public function getModules()
     {
-        return $this->container('Factory');
-    }
-
-    /**
-     * Convinience method to get the Factory object
-     *
-     * @return FactoryInterface
-     */
-    public function getFactory(): FactoryInterface
-    {
-        return $this->container('Factory');
+        return $this->container('Modules');
     }
 
     /**
@@ -643,9 +633,9 @@ class Minimal implements AppInterface
      *
      * @param null $filePath
      *
-     * @return AppInterface
+     * @return array
      */
-    public function registerBindings($filePath = null)
+    public function registerBindings($filePath = null): array
     {
         $filePath || $filePath = $this->getBindingsFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -653,16 +643,19 @@ class Minimal implements AppInterface
         if (file_exists($filePath)) {
             /** @noinspection PhpIncludeInspection */
             $bindings = require_once $filePath;
-            if (is_array($bindings)) {
-                IOC::addBindings($bindings);
-            }
+
+            $bindings = is_array($bindings) ? $bindings : [];
+
+            IOC::addBindings($bindings);
 
             $this->event('minimal.loaded.bindings', [
-                is_array($bindings) ? $bindings : [], $filePath, $this
+                $bindings, $filePath, $this
             ]);
+
+            return $bindings;
         }
 
-        return $this;
+        return [];
     }
 
     /**
@@ -674,7 +667,7 @@ class Minimal implements AppInterface
      *
      * @return AppInterface
      */
-    public function registerProviders($filePath = null)
+    public function registerProviders($filePath = null): array
     {
         $filePath || $filePath = $this->getProvidersFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -683,17 +676,18 @@ class Minimal implements AppInterface
             /** @noinspection PhpIncludeInspection */
             $providers = require_once $filePath;
 
-            if (is_array($providers)) {
-                IOC::addProviders($providers);
-            }
+            $providers = is_array($providers) ? $providers : [];
+
+            IOC::addProviders($providers);
 
             $this->event('minimal.loaded.providers', [
-                is_array($providers) ? $providers : [], $filePath, $this
+                $providers, $filePath, $this
             ]);
+
+            return $providers;
         }
 
-
-        return $this;
+        return [];
     }
 
     /**
@@ -703,9 +697,9 @@ class Minimal implements AppInterface
      *
      * @param $filePath
      *
-     * @return AppInterface
+     * @return array
      */
-    public function registerSubscribers($filePath = null)
+    public function registerSubscribers($filePath = null): array
     {
         $filePath || $filePath = $this->getSubscribersFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
@@ -713,18 +707,21 @@ class Minimal implements AppInterface
         if (file_exists($filePath)) {
             /** @noinspection PhpIncludeInspection */
             $subscribers = require_once $filePath;
-            if (is_array($subscribers)) {
-                foreach ($subscribers as $subscriber) {
-                    $this->getEventDispatcher()->register(IOC::resolve($subscriber));
-                }
+
+            $subscribers = is_array($subscribers) ? $subscribers : [];
+
+            foreach ($subscribers as $subscriber) {
+                $this->getEventDispatcher()->register(IOC::resolve($subscriber));
             }
 
             $this->event('minimal.loaded.subscribers', [
-                is_array($subscribers) ? $subscribers : [], $filePath, $this
+                $subscribers, $filePath, $this
             ]);
+
+            return $subscribers;
         }
 
-        return $this;
+        return [];
     }
 
     /**
@@ -764,27 +761,31 @@ class Minimal implements AppInterface
      *
      * @param $filePath
      *
-     * @return AppInterface
+     * @return array
      */
-    public function registerModules($filePath = null): AppInterface
+    public function registerModules($filePath = null): array
     {
         $filePath || $filePath = $this->getModulesFile();
         is_file($filePath) || $filePath = $this->getBasePath() . $filePath;
 
         if (is_file($filePath)) {
-            /** @var Factory $modules */
-            $modules = $this->getFactory();
-            $modules->setApp($this);
+            /** @var Registry $modules */
 
             /** @noinspection PhpIncludeInspection */
-            $mods = require_once $filePath;
+            $modules = require_once $filePath;
+
+            $modules = is_array($modules) ? $modules : [];
+
+            foreach ($modules as $module) {
+                $this->getModules()->register($module);
+            }
 
             $this->event('minimal.loaded.modules', [
                 $modules, $filePath, $this
             ]);
         }
 
-        return $this;
+        return $modules;
     }
 
     /**

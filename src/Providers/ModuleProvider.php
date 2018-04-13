@@ -1,7 +1,6 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
-use Maduser\Minimal\Framework\Module;
-use Maduser\Minimal\Framework\Facades\IOC;
+use Maduser\Minimal\Modules\Module;
 
 /**
  * Class ModuleProvider
@@ -15,9 +14,6 @@ class ModuleProvider extends AbstractProvider
      */
     public function resolve()
     {
-        return new Module(
-            IOC::resolve('CollectionFactory'),
-            IOC::resolve('Collection')
-        );
+        return new Module(func_get_args()[0]);
     }
 }
