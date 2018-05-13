@@ -29,7 +29,7 @@
     "minimal/middlewares": "v0.1.5",
     "minimal/modules": "v0.1.2",
     "minimal/provider": "v0.1.7",
-    "minimal/routing": "v0.1.9"
+    "minimal/routing": "v0.1.10"
   },
   "require-dev": {
     "phpunit/phpunit": "4.*"
