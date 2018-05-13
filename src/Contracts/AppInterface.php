@@ -36,11 +36,6 @@
 
 namespace Maduser\Minimal\Framework\Contracts;
 
-use Maduser\Minimal\Config\Contracts\ConfigInterface;
-use Maduser\Minimal\Http\Contracts\RequestInterface;
-use Maduser\Minimal\Http\Contracts\ResponseInterface;
-use Maduser\Minimal\Routing\Contracts\RouterInterface;
-
 /**
  * Class Modules
  *
@@ -48,108 +43,5 @@ use Maduser\Minimal\Routing\Contracts\RouterInterface;
  */
 interface AppInterface
 {
-    /**
-     * @return string
-     */
-    public function getBasePath(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setBasePath(string $path): AppInterface;
-
-    /**
-     * @return string
-     */
-    public function getConfigFile(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setConfigFile(string $path): AppInterface;
-
-    /**
-     * @return string
-     */
-    public function getBindingsFile(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setBindingsFile(string $path): AppInterface;
-
-    /**
-     * @return string
-     */
-    public function getProvidersFile(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setProvidersFile(string $path): AppInterface;
-
-    /**
-     * @return string
-     */
-    public function getSubscribersFile(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setSubscribersFile(string $path): AppInterface;
-
-    /**
-     * @return string
-     */
-    public function getRoutesFile(): string;
-
-    /**
-     * @param string $path
-     *
-     * @return AppInterface
-     */
-    public function setRoutesFile(string $path): AppInterface;
-
-    /**
-     * @return ConfigInterface
-     */
-    public function getConfig(): ConfigInterface;
-
-    /**
-     * @return RequestInterface
-     */
-    public function getRequest(): RequestInterface;
-
-    /**
-     * @return ResponseInterface
-     */
-    public function getResponse(): ResponseInterface;
-
-    /**
-     * @return RouterInterface
-     */
-    public function getRouter(): RouterInterface;
-
-    /**
-     * @return AppInterface
-     */
-    public function getApp(): AppInterface;
-
-    /**
-     * @param AppInterface $app
-     *
-     * @return AppInterface
-     */
-    public function setApp(AppInterface $app): AppInterface;
-
+    public function getApp();
 }

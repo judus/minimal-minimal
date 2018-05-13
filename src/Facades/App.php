@@ -9,7 +9,13 @@ use Maduser\Minimal\Framework\Minimal as Implementation;
  */
 class App extends Facade
 {
+    protected static $app;
+
     protected static $instance;
+
+    protected static $baseDir;
+
+    protected static $configDir;
 
     /**
      * Set the instance this facade refers to
@@ -30,16 +36,45 @@ class App extends Facade
      * @return Implementation
      */
     protected static function makeInstance(
-        $class,
-        array $options = null
+        $class, array $options = null
     ): Implementation {
 
-        // TODO: get rid of $_SERVER
-        $options || $options = [
-            'path' => realpath($_SERVER['DOCUMENT_ROOT'] . '/../') . '/'
-        ];
+        $options || $options = ['app' => self::app()];
 
         return IOC::make($class, [$options, true]);
+    }
+
+    public static function app()
+    {
+        return self::$app;
+    }
+
+    public static function use(string $app)
+    {
+        self::$app = $app;
+        return self::class;
+    }
+
+    public static function baseDir(string $path = null)
+    {
+        !$path || self::$baseDir = $path;
+
+        if (self::$baseDir) {
+            return self::$baseDir;
+        }
+
+        return realpath(dirname($_SERVER["SCRIPT_FILENAME"]) . '/../') . '/';
+    }
+
+    public static function configDir(string $path = null)
+    {
+        !$path || self::$configDir = $path;
+
+        if (self::$configDir) {
+            return self::$configDir;
+        }
+
+        return self::baseDir() . 'config/';
     }
 
     /**
@@ -53,22 +88,19 @@ class App extends Facade
     public static function getInstance(
         $class = null,
         array $options = []
-    ): Implementation {
-
+    ) {
         /** @var Implementation $instance */
         if (is_null(self::$instance)) {
             if (is_null($class)) {
                 self::$instance = self::makeInstance(
                     Implementation::class, $options
-                );
+                )->getApp();
 
                 self::$instance->load();
-
             } else {
                 ! is_object($class) || self::$instance = $class;
             }
         }
-
         return self::$instance;
     }
 
@@ -82,7 +114,7 @@ class App extends Facade
      */
     public static function run($uri = null)
     {
-        return self::getInstance()->execute($uri)->getResult();
+        return self::getInstance()->execute($uri)->getResults();
     }
 
     /**
@@ -94,7 +126,7 @@ class App extends Facade
      */
     public static function execute($uri = null)
     {
-        return self::getInstance()->execute($uri)->getResult();
+        return self::getInstance()->execute($uri)->getResults();
     }
 
     /**
@@ -104,7 +136,7 @@ class App extends Facade
      * @param \Closure|null $closure
      * @param null          $class
      */
-    public static function respond(
+    public static function dispatch(
         $options = [],
         $closure = null,
         $class = null

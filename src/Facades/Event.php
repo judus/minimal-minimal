@@ -20,13 +20,25 @@ class Event extends Facade
     protected static $instance;
 
     /**
-     * Register a event subscriber
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Event');
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Register one or several event subscribers
      *
-     * @param $subscriber
+     * @param string|array $subscribers
      *
      * @return mixed
      */
-    public static function register(SubscriberInterface $subscriber)
+    public static function register($subscribers)
     {
         return self::call();
     }

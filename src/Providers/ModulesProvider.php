@@ -1,5 +1,6 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
+use Maduser\Minimal\Framework\Facades\App;
 use Maduser\Minimal\Framework\Facades\Config;
 use Maduser\Minimal\Framework\Facades\IOC;
 use Maduser\Minimal\Collections\Collection;
@@ -18,10 +19,12 @@ class ModulesProvider extends AbstractProvider
      */
     public function resolve()
     {
-        return $this->singleton('Modules', new Modules(
-            IOC::resolve(Collection::class),
-            Config::item('paths.modules'),
-            Config::item('paths.system')
-        ));
+        return App::singleton('Modules', function() {
+            return new Modules(
+                App::resolve(Collection::class),
+                Config::item('paths.modules'),
+                Config::item('paths.system')
+            );
+        });
     }
 }

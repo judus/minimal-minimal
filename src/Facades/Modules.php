@@ -8,7 +8,7 @@ use Maduser\Minimal\Framework\Contracts\ModuleInterface;
 use Maduser\Minimal\Http\Contracts\RequestInterface;
 use Maduser\Minimal\Http\Contracts\ResponseInterface;
 use Maduser\Minimal\Routing\Contracts\RouterInterface;
-use Maduser\Minimal\Modules\Registry as Implementation;
+use Maduser\Minimal\Modules\Modules as Implementation;
 
 class Modules extends Facade
 {
@@ -20,7 +20,7 @@ class Modules extends Facade
     public static function getInstance()
     {
         if (is_null(self::$instance)) {
-            static::$instance = new Implementation();
+            self::$instance = IOC::resolve('Modules');
         }
 
         return self::$instance;

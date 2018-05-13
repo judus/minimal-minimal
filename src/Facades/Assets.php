@@ -10,6 +10,18 @@ class Assets
     protected static $instance;
 
     /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Assets');
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * @param $name
      * @param $arguments
      *
@@ -32,17 +44,6 @@ class Assets
             [static::getInstance(), $name], $arguments);
     }
 
-    /**
-     * @return mixed
-     */
-    public static function getInstance()
-    {
-        if (is_null(static::$instance)) {
-            self::$instance = new Implementation();
-        }
-
-        return self::$instance;
-    }
 
     public static function setSource(
         /** @noinspection PhpUnusedParameterInspection */

@@ -2,6 +2,7 @@
 
 use Maduser\Minimal\Config\Exceptions\KeyDoesNotExistException;
 use Maduser\Minimal\Config\Contracts\ConfigInterface;
+use Maduser\Minimal\Framework\Providers\ConfigProvider;
 
 class Config extends Facade
 {
@@ -9,6 +10,18 @@ class Config extends Facade
      * @var
      */
     protected static $instance;
+
+    /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Config');
+        }
+
+        return self::$instance;
+    }
 
     /**
      * @return array

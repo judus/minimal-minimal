@@ -11,6 +11,18 @@ use Maduser\Minimal\Log\Logger;
 class Log extends Facade
 {
     /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Log');
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * The object this points to
      *
      * @var Logger

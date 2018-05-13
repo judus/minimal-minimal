@@ -1,4 +1,4 @@
-<?php namespace Maduser\Minimal\Framework\Events\Subscribers;
+<?php namespace Maduser\Minimal\Framework;
 
 use Maduser\Minimal\Event\Subscriber;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
@@ -10,9 +10,10 @@ use Maduser\Minimal\Routing\Route;
 use Maduser\Minimal\Routing\Router;
 use Maduser\Minimal\Framework\Facades\App;
 
-class SystemLog extends Subscriber
+class Logger extends Subscriber
 {
     protected $events = [
+        'event.dispatch' => 'onEventDispatch',
         'minimal.loaded.bindings' => 'onAppLoadedBindings',
         'minimal.loaded.providers' => 'onAppLoadedProviders',
         'minimal.loaded.minimal' => 'onAppLoadedMinimal',
@@ -38,40 +39,45 @@ class SystemLog extends Subscriber
 
     public function __construct()
     {
-        $this->header();
+        //$this->header();
     }
 
-    protected function onAppLoadedBindings(array $bindings, string $filePath, AppInterface $app)
+    protected function onEventDispatch(string $eventName)
+    {
+        $this->debug('Event: ' . $eventName);
+    }
+
+    protected function onAppLoadedBindings(string $filePath, array $bindings)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedProviders(array $providers, string $filePath, AppInterface $app)
+    protected function onAppLoadedProviders(string $filePath, array $providers)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedMinimal(array $config, string $filePath, $app)
+    protected function onAppLoadedMinimal(string $filePath, array $config)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedConfig(array $config, string $filePath, $app)
+    protected function onAppLoadedConfig(string $filePath, array $config)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedSubscribers(array $subscribers, string $filePath, AppInterface $app)
+    protected function onAppLoadedSubscribers(string $filePath, array $subscribers)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedRoutes(Router $router, string $filePath, AppInterface $app)
+    protected function onAppLoadedRoutes(string $filePath, Router $router)
     {
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedModules(array $modules, $filePath, $app)
+    protected function onAppLoadedModules(string $filePath, array $modules)
     {
         $this->log('Loaded: ' . $filePath);
     }
@@ -87,7 +93,7 @@ class SystemLog extends Subscriber
         $this->log('Execution starts...');
     }
 
-    protected function onAppRouted(Route $route, $app)
+    protected function onAppRouted(Route $route)
     {
         $this->log('Route found: ' . $route->getUriPattern());
     }
@@ -145,10 +151,6 @@ class SystemLog extends Subscriber
             Log::system('REQUEST FROM ' . Request::getIp());
             Log::info('URI: ' . Request::getUriString());
             Log::system('--------------------------------------------------------');
-            $this->log('Loaded: ' . PATH . App::getBindingsFile());
-            $this->log('Loaded: ' . PATH . App::getProvidersFile());
-            $this->log('Loaded: ' . PATH . App::getMinimalFile());
-            $this->log('Loaded: ' . PATH . App::getConfigFile());
         }
 
         $this->headerLogged = true;
@@ -156,14 +158,19 @@ class SystemLog extends Subscriber
 
     protected function footer()
     {
-        //Log::system('--------------------------------------------------------');
-        //Log::system('DURATION: ' . $this->interval());
+        Log::system('--------------------------------------------------------');
+        Log::info('EXECUTION TIME: ' . $this->interval());
         Log::system('--------------------------------------------------------');
     }
 
     protected function log($message)
     {
         Log::system($this->interval() . ' | ' . $message);
+    }
+
+    protected function debug($message)
+    {
+        Log::debug($this->interval() . ' | ' . $message);
     }
 
     protected function interval()

@@ -17,7 +17,7 @@ class LoggerProvider extends AbstractProvider
     public function resolve()
     {
         $logger = new Logger(
-            PATH . Config::storage('logs'),
+            Config::paths('system') . Config::storage('logs'),
             Config::log('level'),
             Config::log('benchmarks')
         );

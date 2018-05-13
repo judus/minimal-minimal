@@ -13,6 +13,18 @@ class Request extends Facade
     protected static $instance;
 
     /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Request');
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * @return string
      */
     public static function getRequestMethod(): string

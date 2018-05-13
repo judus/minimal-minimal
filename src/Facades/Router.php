@@ -13,12 +13,13 @@ class Router extends Facade
 {
     protected static $instance;
 
-    /**
-     * @return RouterInterface
-     */
-    public static function getInstance(): RouterInterface
+    public static function getInstance()
     {
-        return parent::getInstance();
+        if (is_null(self::$instance)) {
+            self::$instance = IOC::resolve('Router');
+        }
+
+        return self::$instance;
     }
 
     /**

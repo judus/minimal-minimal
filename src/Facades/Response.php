@@ -7,6 +7,18 @@ class Response extends Facade
     protected static $instance;
 
     /**
+     * @return mixed
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            self::$instance = IOC::resolve('Response');
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * @param $content
      *
      * @return mixed
