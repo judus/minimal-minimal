@@ -20,7 +20,7 @@
   },
   "require": {
     "php": ">=7.0.0",
-    "minimal/collections": "v0.1.5",
+    "minimal/collections": "v0.1.4",
     "minimal/config": "v0.1.5",
     "minimal/controllers": "v0.1.8",
     "minimal/event": "v0.1.7",
