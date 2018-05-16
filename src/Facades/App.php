@@ -94,9 +94,10 @@ class App extends Facade
             if (is_null($class)) {
                 self::$instance = self::makeInstance(
                     Implementation::class, $options
-                )->getApp();
+                )->getApp($options);
 
                 self::$instance->load();
+
             } else {
                 ! is_object($class) || self::$instance = $class;
             }

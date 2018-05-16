@@ -23,6 +23,27 @@ use Maduser\Minimal\Framework\Facades\IOC;
  */
 class ApplicationProvider extends AbstractProvider
 {
+    protected $basePath = '../';
+
+    /**
+     * @return string
+     */
+    public function getBasePath(): string
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * @param string $basePath
+     *
+     * @return ApplicationProvider
+     */
+    public function setBasePath(string $basePath): ApplicationProvider
+    {
+        $this->basePath = $basePath;
+        return $this;
+    }
+
     /**
      * @return mixed|void
      */
@@ -36,6 +57,8 @@ class ApplicationProvider extends AbstractProvider
 
             ! isset($args[0]) || extract($args[0]);
 
+            ! isset($basepath) || $this->setBasePath($basepath);
+
             isset($getInstance) || $getInstance = false;
 
             $this->provide();
@@ -45,7 +68,7 @@ class ApplicationProvider extends AbstractProvider
             $this->routes();
             $this->modules();
 
-            return App::make(Application::class, $args);
+            return App::make(Application::class, [$args]);
         });
     }
 
@@ -60,7 +83,7 @@ class ApplicationProvider extends AbstractProvider
                 'resources' => 'resources',
                 'storage' => 'storage',
                 'logs' => 'storage/logs',
-                'system' => '../',
+                'system' => $this->getBasePath(),
                 'translations' => 'storage/lang/lang.json',
                 'views' => 'resources/views/my-theme'
             ],
@@ -103,7 +126,7 @@ class ApplicationProvider extends AbstractProvider
     protected function configure()
     {
         Config::items($this->getConfigDefaults());
-        Config::file('../config/environment.php');
+        Config::file($this->getBasePath() . 'config/environment.php');
     }
 
     /**
@@ -111,15 +134,15 @@ class ApplicationProvider extends AbstractProvider
      */
     protected function provide()
     {
-        $file = '../config/providers.php';
+      $file = $this->getBasePath() . 'config/providers.php';
 
-        if (is_file($file)) {
+      if (is_file($file)) {
 
-            App::register(require_once $file);
+          App::register(require_once $file);
 
         } else {
 
-            App::register([
+          App::register([
                 'Assets' => AssetsProvider::class,
                 'Collection' => CollectionProvider::class,
                 'Config' => ConfigProvider::class,
@@ -146,7 +169,7 @@ class ApplicationProvider extends AbstractProvider
      */
     protected function bind()
     {
-        $file = '../config/bindings.php';
+        $file = $this->getBasePath() . 'config/bindings.php';
 
         if (is_file($file)) {
 
@@ -176,7 +199,7 @@ class ApplicationProvider extends AbstractProvider
      */
     protected function subscribe()
     {
-        $file = '../config/subscribers.php';
+        $file = $this->getBasePath() . 'config/subscribers.php';
 
         if (is_file($file)) {
 
@@ -196,14 +219,14 @@ class ApplicationProvider extends AbstractProvider
 
     protected function routes()
     {
-        $file = '../config/routes.php';
+        $file = $this->getBasePath() . 'config/routes.php';
 
         is_file($file) && require_once $file;
     }
 
     protected function modules()
     {
-        $file = '../config/modules.php';
+        $file = $this->getBasePath() . 'config/modules.php';
 
         if (is_file($file)) {
 

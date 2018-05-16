@@ -28,7 +28,7 @@
     "minimal/log": "v0.1.2",
     "minimal/middlewares": "v0.1.6",
     "minimal/modules": "v0.1.3",
-    "minimal/provider": "v0.1.7",
+    "minimal/provider": "v0.1.8",
     "minimal/routing": "v0.1.10"
   },
   "require-dev": {

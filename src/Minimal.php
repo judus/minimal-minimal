@@ -1,5 +1,6 @@
 <?php namespace Maduser\Minimal\Framework;
 
+use function foo\func;
 use Maduser\Minimal\Framework\Application;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
 use Maduser\Minimal\Framework\Providers\ApplicationProvider;
@@ -31,6 +32,10 @@ class Minimal implements AppInterface
      */
     public function getApp()
     {
-        return IOC::resolve('App', func_get_args());
+
+        $args = func_get_args();
+        $args = count($args) > 0 ? $args[0] : null;
+
+        return IOC::resolve('App', $args);
     }
 }
