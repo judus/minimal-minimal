@@ -26,7 +26,7 @@
     "minimal/event": "v0.1.8",
     "minimal/http": "v0.1.3",
     "minimal/log": "v0.1.2",
-    "minimal/middlewares": "v0.1.6",
+    "minimal/middlewares": "v0.1.7",
     "minimal/modules": "v0.1.4",
     "minimal/provider": "v0.1.8",
     "minimal/routing": "v0.1.10"
