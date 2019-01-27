@@ -94,7 +94,7 @@ class App extends Facade
             if (is_null($class)) {
                 self::$instance = self::makeInstance(
                     Implementation::class, $options
-                )->getApp();
+                )->getApp($options);
 
                 self::$instance->load();
             } else {
@@ -156,7 +156,7 @@ class App extends Facade
 
         is_null($_closure) || $_closure();
 
-        self::getInstance()->execute()->respond()->terminate();
+        self::getInstance()->dispatch();
     }
 
     /**

@@ -64,6 +64,15 @@ class Application extends Subscriber
      */
     public function dispatch()
     {
+        if ((php_sapi_name() === 'cli' or defined('STDIN'))) {
+
+            global $argv;
+
+            new \Maduser\Minimal\Cli\Cli(array_slice($argv, 1), $this);
+
+            $this->terminate();
+        }
+
         $this->execute()->respond()->terminate();
     }
 

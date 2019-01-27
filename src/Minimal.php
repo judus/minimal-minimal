@@ -31,6 +31,10 @@ class Minimal implements AppInterface
      */
     public function getApp()
     {
-        return IOC::resolve('App', func_get_args());
+
+        $args = func_get_args();
+        $args = count($args) > 0 ? $args[0] : null;
+
+        return IOC::resolve('App', $args);
     }
 }
