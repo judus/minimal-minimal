@@ -190,7 +190,17 @@ class IOC extends Facade
      *
      * @return mixed
      */
-    public static function resolve($name)
+    public static function boot($name = null)
+    {
+        return self::call();
+    }
+
+    /**
+     * @param $name
+     *
+     * @return mixed
+     */
+    public static function resolve($name, array $params = null)
     {
         return self::call();
     }

@@ -1,7 +1,7 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
 use Maduser\Minimal\Collections\Collection;
-
+use Maduser\Minimal\Framework\Facades\App;
 /**
  * Class CollectionProvider
  *
@@ -12,8 +12,8 @@ class CollectionProvider extends AbstractProvider
     /**
      * @return Collection
      */
-    public function resolve()
+    public function resolve(array $params = null)
     {
-        return new Collection();
+        return App::make(Collection::class, $params);
     }
 }

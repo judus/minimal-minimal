@@ -56,6 +56,16 @@ class Config extends Facade
     }
 
     /**
+     * @param string $file
+     *
+     * @return mixed
+     */
+    public static function file(string $file)
+    {
+        return self::call();
+    }
+
+    /**
      * @return bool
      */
     public static function isLiteral(): bool

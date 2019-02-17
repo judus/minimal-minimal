@@ -152,13 +152,11 @@ class ArrayLoader
      */
     public static function routes(string $filePath = null)
     {
-
         if (is_file($filePath)) {
             require $filePath;
 
-            //Event::dispatch('minimal.loaded.routes', [$filePath, $router]);
+            Event::dispatch('minimal.loaded.routes', [$filePath]);
         }
-
     }
 
     /**
@@ -176,8 +174,10 @@ class ArrayLoader
 
             $modules = is_array($modules) ? $modules : [];
 
+            $Modules = IOC::resolve('Modules');
+
             foreach ($modules as $module) {
-                IOC::resolve('Modules')->register($module);
+                $Modules->register($module);
             }
 
             Event::dispatch('minimal.loaded.modules', [$filePath, $modules]);

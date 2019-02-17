@@ -1,8 +1,8 @@
-<?php namespace Maduser\Minimal\Framework;
+<?php namespace Maduser\Minimal\Framework\Apps\Eventual\Subscribers;
 
 use Maduser\Minimal\Event\Subscriber;
 use Maduser\Minimal\Framework\Facades\App;
-use Maduser\Minimal\Framework\ArrayLoader;
+use Maduser\Minimal\Framework\Apps\Maximal\ArrayLoader;
 use Maduser\Minimal\Framework\Facades\Config;
 use Maduser\Minimal\Framework\Facades\Event;
 use Maduser\Minimal\Framework\Facades\IOC;

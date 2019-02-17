@@ -1,13 +1,13 @@
 <?php
 /**
- * ProviderInterface.php
- * 11/22/16 - 12:59 AM
+ * ApplicationInterface.php
+ * 2/9/19 - 6:26 PM
  *
  * PHP version 7
  *
  * @package    @package_name@
  * @author     Julien Duseyau <julien.duseyau@gmail.com>
- * @copyright  2016 Julien Duseyau
+ * @copyright  2019 Julien Duseyau
  * @license    https://opensource.org/licenses/MIT
  * @version    Release: @package_version@
  *
@@ -34,30 +34,17 @@
  * THE SOFTWARE.
  */
 
-namespace Maduser\Minimal\Framework\Providers\Contracts;
+namespace Maduser\Minimal\Framework;
 
-/**
- * Interface ProviderInterface
- *
- * @package Maduser\Minimal\Providers
- */
-interface ProviderInterface
+interface ApplicationInterface
 {
-    /**
-     * @return mixed
-     */
-    public function register();
+    public function dispatch();
 
-    /**
-     * @return mixed
-     */
-    public function resolve();
+    public function load() : ApplicationInterface;
 
-    /**
-     * @param $name
-     * @param $object
-     *
-     * @return mixed
-     */
-    public function singleton($name, $object);
+    public function execute(string $uri = null) : ApplicationInterface;
+
+    public function respond() : ApplicationInterface;
+
+    public function terminate();
 }

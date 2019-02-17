@@ -1,4 +1,4 @@
-<?php namespace Maduser\Minimal\Framework;
+<?php namespace Maduser\Minimal\Framework\Apps\Eventual\Subscribers;
 
 use Maduser\Minimal\Event\Subscriber;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
@@ -72,7 +72,7 @@ class Logger extends Subscriber
         $this->log('Loaded: ' . $filePath);
     }
 
-    protected function onAppLoadedRoutes(string $filePath, Router $router)
+    protected function onAppLoadedRoutes(string $filePath)
     {
         $this->log('Loaded: ' . $filePath);
     }

@@ -1,9 +1,9 @@
 <?php namespace Maduser\Minimal\Framework;
 
-use Maduser\Minimal\Framework\Application;
+use Maduser\Minimal\Framework\Apps\Maximal\MaximalApplicationProvider;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
-use Maduser\Minimal\Framework\Providers\ApplicationProvider;
 use Maduser\Minimal\Framework\Facades\IOC;
+use Maduser\Minimal\Framework\Facades\App;
 
 /**
  * Class Minimal
@@ -13,6 +13,36 @@ use Maduser\Minimal\Framework\Facades\IOC;
 class Minimal implements AppInterface
 {
     /**
+     * @var string
+     */
+    protected $provider = MaximalApplicationProvider::class;
+
+    /**
+     * @var 
+     */
+    protected $app;
+
+    /**
+     * @return string
+     */
+    public function getProvider(): string
+    {
+        return $this->provider;
+    }
+
+    /**
+     * @param string $provider
+     *
+     * @return Minimal
+     */
+    public function setProvider(string $provider): Minimal
+    {
+        $this->provider = $provider;
+
+        return $this;
+    }
+    
+    /**
      * Minimal constructor.
      *
      * @param array|null $params
@@ -21,9 +51,9 @@ class Minimal implements AppInterface
     {
         extract($params);
 
-        isset($app) || $app = ApplicationProvider::class;
+        isset($provider) || $provider = $this->getProvider();
 
-        IOC::addProviders(['App' => $app]);
+        IOC::addProviders(['App' => $provider]);
     }
 
     /**
@@ -31,7 +61,6 @@ class Minimal implements AppInterface
      */
     public function getApp()
     {
-
         $args = func_get_args();
         $args = count($args) > 0 ? $args[0] : null;
 

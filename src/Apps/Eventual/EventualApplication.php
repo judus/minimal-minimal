@@ -1,6 +1,8 @@
-<?php namespace Maduser\Minimal\Framework;
+<?php namespace Maduser\Minimal\Framework\Apps\Eventual;
 
 use Maduser\Minimal\Event\Subscriber;
+use Maduser\Minimal\Framework\AbstractApplication;
+use Maduser\Minimal\Framework\ApplicationInterface;
 use Maduser\Minimal\Framework\Contracts\AppInterface;
 use Maduser\Minimal\Framework\Facades\App;
 use Maduser\Minimal\Framework\Facades\Config;
@@ -11,7 +13,7 @@ use Maduser\Minimal\Framework\Facades\Response;
 use Maduser\Minimal\Framework\Facades\Router;
 use Maduser\Minimal\Provider\Contracts\ProviderInterface;
 
-class Application extends Subscriber
+class EventualApplication implements ApplicationInterface
 {
     protected $container = [];
 
@@ -64,11 +66,11 @@ class Application extends Subscriber
      */
     public function dispatch()
     {
-        if ((php_sapi_name() === 'cli' or defined('STDIN'))) {
+        if (php_sapi_name() === 'cli' || defined('STDIN')) {
 
             global $argv;
 
-            new \Maduser\Minimal\Cli\Cli(array_slice($argv, 1), $this);
+            App::make('Cli', [array_slice($argv, 1), $this]);
 
             $this->terminate();
         }
@@ -81,9 +83,9 @@ class Application extends Subscriber
      *
      * @param array|null $files
      *
-     * @return Application
+     * @return ApplicationInterface
      */
-    public function load(array $files = null)
+    public function load(array $files = null) : ApplicationInterface
     {
         Event::dispatch('minimal.load', [$files]);
 
@@ -93,11 +95,11 @@ class Application extends Subscriber
     /**
      * Dispatch execute event
      *
-     * @param null $uri
+     * @param string|null $uri
      *
-     * @return Application
+     * @return ApplicationInterface
      */
-    public function execute($uri = null)
+    public function execute(string $uri = null): ApplicationInterface
     {
         Event::dispatch('minimal.execute', $uri);
 
@@ -107,9 +109,9 @@ class Application extends Subscriber
     /**
      * Dispatch respond event
      *
-     * @return Application
+     * @return ApplicationInterface
      */
-    public function respond()
+    public function respond(): ApplicationInterface
     {
         Event::dispatch('minimal.respond', $this);
 
@@ -119,9 +121,9 @@ class Application extends Subscriber
     /**
      * Dispatch terminate event
      *
-     * @return Application
+     * @return ApplicationInterface
      */
-    public function terminate()
+    public function terminate(): ApplicationInterface
     {
         Event::dispatch('minimal.terminate', $this);
 

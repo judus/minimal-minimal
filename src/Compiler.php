@@ -1,101 +1,147 @@
 <?php namespace Maduser\Minimal\Framework;
 
+use Maduser\Minimal\Collections\Collection;
+use Maduser\Minimal\Event\Contracts\SubscriberInterface;
 use Maduser\Minimal\Framework\Facades\Config;
+use Maduser\Minimal\Framework\Facades\Event;
 use Maduser\Minimal\Framework\Facades\IOC;
 use Maduser\Minimal\Event\Subscriber;
+use Maduser\Minimal\Framework\Facades\App;
+use Maduser\Minimal\Modules\Module;
+use Maduser\Minimal\Modules\Modules;
+use Maduser\Minimal\Provider\Contracts\ProviderInterface;
 
 class Compiler extends Subscriber
 {
     protected $events = [
-        'minimal.loaded.bindings' => 'addBindings',
-        'minimal.loaded.config' => 'addConfig',
-        'minimal.loaded.modules' => 'addModules',
-        'minimal.loaded.providers' => 'addProviders',
-        'minimal.loaded.routes' => 'addRoutes',
-        'minimal.loaded.subscribers' => 'addSubscribers',
+        'minimal.loaded.routes' => 'addRoutesFile',
         'minimal.terminate' => 'compileConfigs'
     ];
 
-    protected $loadedFiles = [];
+    protected $routesFiles = [];
 
-    public function add(string $type, string $file, array $array = [])
-    {
-        if (!empty($file) && count($array) > 0) {
-
-            isset($this->loadedFiles[$type]) || $this->loadedFiles[$type] = [];
-
-            $this->loadedFiles[$type][] = [
-                'file' => $file,
-                'contents' => $array
-            ];
-        }
-    }
-
-    public function addBindings(string $file = null, array $array = null)
-    {
-        $this->add('bindings', $file, $array);
-    }
-
-    public function addConfig(string $file = null, array $array = null)
-    {
-        $this->add('config', $file, $array);
-    }
-
-    public function addModules(string $file = null, array $array = null)
-    {
-        $this->add('modules', $file, $array);
-    }
-
-    public function addProviders(string $file = null, array $array = null)
-    {
-        $this->add('providers', $file, $array);
-    }
-
-    public function addRoutes(string $file = null)
-    {
-        //$this->add('routes', $file);
-    }
-
-    public function addSubscribers(string $file = null, array $array = null)
-    {
-        $this->add('subscribers', $file, $array);
+    public function addRoutesFile($filePath) {
+        $this->routesFiles[] = $filePath;
     }
 
     public function compileConfigs()
     {
+        $providers = App::providers()->each(function($item) {
+            return is_object($item) ? get_class($item) : $item;
+        });
+
+        /** @var Collection $events */
+        $events = App::resolve('Collection', [App::resolve('Event')->events()]);
+        $events = $events->each(function($event, $subscribers) {
+            $actions = [];
+            foreach ($subscribers as $subscriber) {
+                /** @var SubscriberInterface $subscriber */
+                $eventActions = $subscriber->getEventActions($event);
+                foreach ($eventActions as $ea) {
+                    $actions[$event][get_class($subscriber)][] = $ea;
+                }
+            }
+            return $actions[$event];
+        });
+
+        /** @var Collection $modules */
+        $modules = App::resolve('Modules')->all();
+        $modules = $modules->each(function ($alias, $module) {
+            /** @var Module $module */
+            return $module->toArray();
+        });
+
+        $router = App::resolve('Router');
+
+        dump($router->getRoutes());
+
+        $routes = '';
+        foreach ($this->routesFiles as $routesFile) {
+            $routes .= $this->getScriptContent($routesFile);
+        }
+
+        $routes = implode("\n" , $this->uses) . $routes;
+
         $configs = [
             'config' => Config::items(),
-            'bindings' => $this->getMerged('bindings'),
-            'providers' => $this->getMerged('providers'),
-            'subscribers' => $this->getMerged('subscribers'),
-            'modules' => $this->getMerged('modules')
+            'bindings' => App::bindings()->getArray(),
+            'providers' => $providers->getArray(),
+            'subscribers' => $events->getArray(),
+            'modules' => $modules->toArray(),
         ];
 
-        $this->toFile($configs);
+        $content = "<?php\n" . '$config = ' . var_export($configs, true) . ";\n";
+        $content .= $routes;
+        $content .= "\n" . 'return $config;';
+
+        $this->toFile($content);
     }
 
-    public function toFile($array)
+    protected $uses;
+    public function getScriptContent($script)
     {
-        $path = rtrim(Config::paths('system'), '/') . '/' .
-            rtrim(Config::storage('app'), '/') . '/' .
-            'compiled-configs.json';
+        $content = file_get_contents($script);
+        $content = ltrim($content, '<?php ');
+        $lines = explode("\n", $content);
+        $uses = [];
 
-        if (! is_file($path)) {
-            $content = json_encode($array, JSON_PRETTY_PRINT);
-            file_put_contents($path, $content, LOCK_EX);
-        }
-    }
-
-    public function getMerged(string $key)
-    {
-        $bindings = [];
-
-        if (isset($this->loadedFiles[$key])) {
-            foreach ($this->loadedFiles[$key] as $item) {
-                $bindings = array_merge($bindings, $item['contents']);
+        foreach ($lines as &$line) {
+            if ($this->startsWith($line, 'use ') && $this->endsWith($line, ';')) {
+                $this->uses[$line] = $line;
+                $line = '';
             }
         }
 
-        return $bindings;
+        $content = implode("\n", $lines);
+        $content = str_replace("\n\n", "\n", $content);
+
+        return $content;
     }
+
+
+    /**
+     * @param $haystack
+     * @param $needle
+     *
+     * @return bool
+     */
+    protected function startsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
+    /**
+     * @param $haystack
+     * @param $needle
+     *
+     * @return bool
+     */
+    protected function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+
+    public function toFile($content)
+    {
+        $path = rtrim(Config::paths('system'), '/') . '/' .
+            rtrim(Config::storage('app'), '/') . '/' .
+            'compiled.php';
+
+        //if (! is_file($path)) {
+            file_put_contents($path, $content, LOCK_EX);
+
+            dump(require_once $path);
+        //}
+    }
+
+
+
 }

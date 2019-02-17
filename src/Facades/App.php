@@ -39,7 +39,7 @@ class App extends Facade
         $class, array $options = null
     ): Implementation {
 
-        $options || $options = ['app' => self::app()];
+        $options || $options = ['provider' => self::app()];
 
         return IOC::make($class, [$options, true]);
     }
@@ -236,8 +236,8 @@ class App extends Facade
      *
      * @return mixed
      */
-    public static function resolve($name)
+    public static function  resolve($name, $params = [])
     {
-        return IOC::resolve($name);
+        return IOC::resolve($name, $params);
     }
 }

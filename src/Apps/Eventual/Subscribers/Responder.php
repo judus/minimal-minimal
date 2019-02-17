@@ -1,4 +1,4 @@
-<?php namespace Maduser\Minimal\Framework;
+<?php namespace Maduser\Minimal\Framework\Apps\Eventual\Subscribers;
 
 use Maduser\Minimal\Event\Subscriber;
 use Maduser\Minimal\Framework\Facades\App;
