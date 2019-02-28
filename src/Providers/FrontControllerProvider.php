@@ -1,7 +1,8 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
+use Maduser\Minimal\Controllers\Dispatcher;
 use Maduser\Minimal\Controllers\FrontController;
-use Maduser\Minimal\Framework\Facades\IOC;
+use Maduser\Minimal\Framework\Facades\App;
 
 /**
  * Class FrontControllerProvider
@@ -15,6 +16,6 @@ class FrontControllerProvider extends AbstractProvider
      */
     public function resolve()
     {
-        return IOC::make(FrontController::class);
+        return App::make(FrontController::class);
     }
 }

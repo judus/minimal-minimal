@@ -4,6 +4,7 @@ namespace Maduser\Minimal\Framework;
 
 use Maduser\Minimal\Framework\Apps\Minimal\MinimalApplication;
 use Maduser\Minimal\Framework\Facades\App;
+use Maduser\Minimal\Framework\Facades\Commands;
 use Maduser\Minimal\Framework\Facades\Config;
 use Maduser\Minimal\Framework\Facades\Router;
 use Maduser\Minimal\Framework\Providers\AbstractProvider;
@@ -71,7 +72,9 @@ abstract class AbstractApplicationProvider extends AbstractProvider implements A
      */
     public function basepath()
     {
-        !(php_sapi_name() === 'cli' || defined('STDIN')) || $this->setBasePath('./');
+        if (php_sapi_name() === 'cli' || defined('STDIN')) {
+            $this->setBasePath('./');
+        }
     }
 
     /**
@@ -80,9 +83,11 @@ abstract class AbstractApplicationProvider extends AbstractProvider implements A
     public function register()
     {
         $this->basepath();
-        App::register($this->providers());
         App::bind($this->bindings());
-        Config::items($this->config());
+        App::register(['Config' => Providers\ConfigProvider::class]);
+        Config::push($this->config());
+        App::register($this->providers());
+        Commands::register($this->commands());
         $this->routes();
     }
 

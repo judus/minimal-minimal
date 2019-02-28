@@ -37,6 +37,7 @@
 
 namespace Maduser\Minimal\Framework\Providers;
 
+use Maduser\Minimal\Framework\Facades\Request;
 use Whoops\Handler\Handler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -48,6 +49,10 @@ use Whoops\Run;
  */
 class WhoopsProvider extends AbstractProvider
 {
+    public function register()
+    {
+        //! Request::isCli() || $this->resolve();
+    }
     /**
      * @return Run
      */

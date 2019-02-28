@@ -1,6 +1,7 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
 use Maduser\Minimal\Config\Config;
+use Maduser\Minimal\Framework\Facades\App;
 
 /**
  * Class ConfigProvider
@@ -14,6 +15,6 @@ class ConfigProvider extends AbstractProvider
      */
     public function resolve()
     {
-        return $this->singleton('Config', new Config());
+        return $this->singleton('Config', App::make(Config::class));
     }
 }

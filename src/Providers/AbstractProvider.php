@@ -1,6 +1,7 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
 use Maduser\Minimal\Framework\Facades\App;
+use Maduser\Minimal\Framework\Facades\Commands;
 use Maduser\Minimal\Framework\Facades\Config;
 use Maduser\Minimal\Framework\Facades\Event;
 use Maduser\Minimal\Framework\Facades\IOC;
@@ -30,6 +31,9 @@ abstract class AbstractProvider implements AbstractProviderInterface
         $subscribers = $this->subscribers();
         count($subscribers) > 0 && Event::register($subscribers);
 
+        $commands = $this->commands();
+        count($commands) > 0 && Commands::register($commands);
+
         $this->routes();
     }
 
@@ -49,6 +53,11 @@ abstract class AbstractProvider implements AbstractProviderInterface
     }
 
     public function subscribers(): array
+    {
+        return [];
+    }
+
+    public function commands()
     {
         return [];
     }
