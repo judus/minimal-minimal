@@ -112,9 +112,9 @@ class App extends Facade
      * @return $this
      *
      */
-    public static function run($uri = null)
+    public static function run($uri = null, $options = null, $method = null)
     {
-        return self::getInstance()->execute($uri)->getResults();
+        return self::getInstance()->execute($uri, $method)->getResults();
     }
 
     /**
@@ -236,8 +236,13 @@ class App extends Facade
      *
      * @return mixed
      */
-    public static function  resolve($name, $params = [])
+    public static function resolve($name, $params = [])
     {
         return IOC::resolve($name, $params);
+    }
+
+    public static function has($name)
+    {
+        return IOC::hasProvider($name);
     }
 }
