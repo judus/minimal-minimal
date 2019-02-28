@@ -107,4 +107,14 @@ class Request extends Facade
     {
         return self::call();
     }
+
+    /**
+     * @param array|null $server
+     *
+     * @return array
+     */
+    public static function args(array $server = null)
+    {
+        return self::getInstance()->getArgs($server);
+    }
 }
