@@ -51,7 +51,7 @@ class WhoopsProvider extends AbstractProvider
 {
     public function register()
     {
-        //! Request::isCli() || $this->resolve();
+        ! Request::isCli() || $this->resolve();
     }
     /**
      * @return Run
