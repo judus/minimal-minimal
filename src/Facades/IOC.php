@@ -248,4 +248,9 @@ class IOC extends Facade
         return self::call();
     }
 
+    public static function compile()
+    {
+        return self::call();
+    }
+
 }

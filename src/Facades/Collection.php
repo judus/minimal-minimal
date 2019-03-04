@@ -2,7 +2,7 @@
 
 use Maduser\Minimal\Collections\Exceptions\InvalidKeyException;
 use Maduser\Minimal\Collections\Exceptions\KeyInUseException;
-use Maduser\Minimal\Collections\Exceptions\CollectionInterface;
+use Maduser\Minimal\Collections\Contracts\CollectionInterface;
 
 class Collection extends Facade
 {
@@ -34,6 +34,11 @@ class Collection extends Facade
      * @throws KeyInUseException
      */
     public static function add($obj, $key = null): CollectionInterface
+    {
+        return self::call();
+    }
+
+    public static function create(array $items = []): CollectionInterface
     {
         return self::call();
     }

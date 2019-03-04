@@ -37,7 +37,7 @@ class Router extends Facade
      * @param $uriPattern
      * @param $action
      *
-     * @return mixed
+     * @return RouteInterface
      */
     public static function get($uriPattern, $action)
     {
@@ -48,7 +48,7 @@ class Router extends Facade
      * @param $uriPattern
      * @param $action
      *
-     * @return mixed
+     * @return RouteInterface
      */
     public static function post($uriPattern, $action)
     {
@@ -59,7 +59,7 @@ class Router extends Facade
      * @param $uriPattern
      * @param $action
      *
-     * @return mixed
+     * @return RouteInterface
      */
     public static function put($uriPattern, $action)
     {
@@ -70,7 +70,7 @@ class Router extends Facade
      * @param $uriPattern
      * @param $action
      *
-     * @return mixed
+     * @return RouteInterface
      */
     public static function patch($uriPattern, $action)
     {
@@ -81,7 +81,7 @@ class Router extends Facade
      * @param $uriPattern
      * @param $action
      *
-     * @return mixed
+     * @return RouteInterface
      */
     public static function delete($uriPattern, $action)
     {
@@ -122,6 +122,17 @@ class Router extends Facade
      * @return bool
      */
     public static function isClosure(bool $bool = null): bool
+    {
+        return self::call();
+    }
+
+    /**
+     * @param string $name
+     * @param array  $params
+     *
+     * @return string
+     */
+    public static function uri(string $name, array $params = [])
     {
         return self::call();
     }

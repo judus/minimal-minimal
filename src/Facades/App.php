@@ -11,6 +11,8 @@ class App extends Facade
 {
     protected static $app;
 
+    protected static $mode;
+
     protected static $instance;
 
     protected static $baseDir;
@@ -39,7 +41,7 @@ class App extends Facade
         $class, array $options = null
     ): Implementation {
 
-        $options || $options = ['provider' => self::app()];
+        $options || $options = ['provider' => self::app(), 'mode' => self::$mode];
 
         return IOC::make($class, [$options, true]);
     }
@@ -49,9 +51,10 @@ class App extends Facade
         return self::$app;
     }
 
-    public static function use(string $app)
+    public static function use(string $app, string $mode = 'development')
     {
         self::$app = $app;
+        self::$mode = $mode;
         return self::class;
     }
 

@@ -67,6 +67,11 @@ class MinimalApplication extends AbstractApplication
         $middleware = App::resolve('Middleware', [$route->getMiddlewares()]);
 
         $this->results = $middleware->dispatch(function () use ($route, $uri) {
+
+            if ($route->getDispatcher()) {
+                return App::make($route->getDispatcher())->dispatch($route);
+            }
+
             return App::resolve('Dispatcher')->dispatch($route);
         });
 

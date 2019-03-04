@@ -1,6 +1,8 @@
 <?php namespace Maduser\Minimal\Framework\Providers;
 
+use Maduser\Minimal\Framework\Facades\App;
 use Maduser\Minimal\Framework\Facades\IOC;
+use Maduser\Minimal\Routing\Route;
 use Maduser\Minimal\Routing\Router;
 
 /**
@@ -10,15 +12,18 @@ use Maduser\Minimal\Routing\Router;
  */
 class RouterProvider extends AbstractProvider
 {
+    public function providers(): array
+    {
+        return [
+            'Route' => RouteProvider::class
+        ];
+    }
+
     /**
      * @return mixed
      */
     public function resolve()
     {
-        return $this->singleton('Router', new Router(
-            IOC::resolve('Request'),
-            IOC::resolve('Route'),
-            IOC::resolve('Response')
-        ));
+        return $this->singleton('Router', App::make(Router::class));
     }
 }
